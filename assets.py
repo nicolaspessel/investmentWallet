@@ -1,14 +1,43 @@
+import datetime as dt, json
+
 class Portifolio():
-    ...
-
-
-class Transaction():
     def __init__(self) -> None:
-        pass
+        ...
+        
+
+
+class Transaction:
+    def __init__(self, asset_code:str, operation:str, amount:int, price:float) -> None:
+        self.asset_code = asset_code
+        self.operation = operation  # purchase or sell
+        self.amount = amount
+        self.price = price
+        self.date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    def __repr__(self) -> str:
+        inforrepr1 = f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code}'
+        inforrepr2 = f'Amount: {self.amount} | Price: {self.price} | Total price: {self._calculate_total_price()}'
+        return inforrepr1 + inforrepr2
+
+    def calculate_total_price(self) -> float | int:
+        return self.amount * self.price
+
+    def convert_to_dict(self) -> dict:
+        total = self.calculate_total_price()
+        
+        return {
+            self.operation,
+            self.asset_code,
+            self.amount,
+            self.price,
+            total,
+            self.date
+        }
+
         
 
 class Assets:
-    def __init__(self, code:str, name:str, type:str, amount:int | 0, price:float | 0) -> None:
+    def __init__(self, code:str, name:str, type:str, amount:int = 0, price:float = 0) -> None:
         self.code = code
         self.name = name
         self.type = type  
