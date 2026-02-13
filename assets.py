@@ -1,10 +1,4 @@
-import datetime as dt, json
-
-class Portifolio():
-    def __init__(self) -> None:
-        ...
-        
-
+import datetime as dt, json 
 
 class Transaction:
     def __init__(self, asset_code:str, operation:str, amount:int, price:float) -> None:
@@ -15,26 +9,23 @@ class Transaction:
         self.date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def __repr__(self) -> str:
-        inforrepr1 = f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code}'
-        inforrepr2 = f'Amount: {self.amount} | Price: {self.price} | Total price: {self._calculate_total_price()}'
-        return inforrepr1 + inforrepr2
+        inforepr1 = f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code}'
+        inforepr2 = f'Amount: {self.amount} | Price: {self.price} | Total price: {self._calculate_total_price()}'
+        return inforepr1 + inforepr2
 
     def calculate_total_price(self) -> float | int:
         return self.amount * self.price
 
     def convert_to_dict(self) -> dict:
-        total = self.calculate_total_price()
-        
         return {
-            self.operation,
-            self.asset_code,
-            self.amount,
-            self.price,
-            total,
-            self.date
+            'operation': self.operation,
+            'asset_code': self.asset_code,
+            'amount': self.amount,
+            'price': self.price,
+            'total': self.calculate_total_price(),
+            'date': self.date
         }
-
-        
+    
 
 class Assets:
     def __init__(self, code:str, name:str, type:str, amount:int = 0, price:float = 0) -> None:
@@ -44,6 +35,9 @@ class Assets:
         self.amount = amount
         self.medium_price = price
         self.curr_price = price 
+
+    def __repr__(self):
+        inforepr1
 
     def _calculate_invested_val(self) -> float | int:  # Here we don't need to pass amount, for example, because the instance
         return self.amount * self.medium_price         # already have the self.amount when initialized, and so does the method.
@@ -65,4 +59,26 @@ class Assets:
             invested_val = self.calculate_invested_val()
             invested_val += (amount * price)
             self.amount += amount
-            self.medium_price = invested_val / self.amount       
+            self.medium_price = invested_val / self.amount
+
+
+class Portifolio():
+    def __init__(self) -> None:
+        self.assets:list[Assets] = []
+        self.transactions:list[Assets] = []
+
+    def add_transaction(self, transaction:Transaction):
+        self.transactions.append(transaction)
+        transaction_info = transaction.convert_to_dict()
+
+        with open('transaction_log.json,', 'a+') as json_file:
+            json.dump('New transaction report.', json_file)
+            json.dump(transaction_info, json_file, indent=2)
+
+    def add_asset(self, asset:Assets):
+        self.assets.append(asset)
+
+    def list_portifolio(self):
+        print('Portifolio listing...')
+        for asset in self.assets:
+            print(f'{asset}\n')      
