@@ -9,9 +9,8 @@ class Transaction:
         self.date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def __repr__(self) -> str:
-        inforepr1 = f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code}'
-        inforepr2 = f'Amount: {self.amount} | Price: {self.price} | Total price: {self._calculate_total_price()}'
-        return inforepr1 + inforepr2
+        return f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code} \n \
+                Amount: {self.amount} | Price: ${self.price} | Total price: ${self._calculate_total_price()}'
 
     def calculate_total_price(self) -> float | int:
         return self.amount * self.price
@@ -37,7 +36,8 @@ class Assets:
         self.curr_price = price 
 
     def __repr__(self):
-        inforepr1
+        return f'Asset: {self.code} | Type: {self.type} | Amount: {self.amount} | Medium price: ${self.medium_price:.2f}\n \
+                Current price: ${self.curr_price:.2f}'
 
     def _calculate_invested_val(self) -> float | int:  # Here we don't need to pass amount, for example, because the instance
         return self.amount * self.medium_price         # already have the self.amount when initialized, and so does the method.
