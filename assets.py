@@ -60,25 +60,3 @@ class Assets:
             invested_val += (amount * price)
             self.amount += amount
             self.medium_price = invested_val / self.amount
-
-
-class Portifolio():
-    def __init__(self) -> None:
-        self.assets:list[Assets] = []
-        self.transactions:list[Assets] = []
-
-    def add_transaction(self, transaction:Transaction):
-        self.transactions.append(transaction)
-        transaction_info = transaction.convert_to_dict()
-
-        with open('transaction_log.json,', 'a+') as json_file:
-            json.dump('New transaction report.', json_file)
-            json.dump(transaction_info, json_file, indent=2)
-
-    def add_asset(self, asset:Assets):
-        self.assets.append(asset)
-
-    def list_portifolio(self):
-        print('Portifolio listing...')
-        for asset in self.assets:
-            print(f'{asset}\n')      
