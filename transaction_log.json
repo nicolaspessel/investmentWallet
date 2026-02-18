@@ -5,14 +5,22 @@
         "amount": 10,
         "price": 40,
         "total": 400,
-        "date": "2026-02-18 15:26:21"
+        "date": "2026-02-18 16:54:44"
     },
     {
         "operation": "purchase",
         "asset_code": "PETR4",
         "amount": 10,
+        "price": 50,
+        "total": 500,
+        "date": "2026-02-18 16:54:44"
+    },
+    {
+        "operation": "sell",
+        "asset_code": "PETR4",
+        "amount": 10,
         "price": 40,
         "total": 400,
-        "date": "2026-02-18 15:26:21"
+        "date": "2026-02-18 16:54:44"
     }
 ]
