@@ -9,7 +9,7 @@ class Transaction:
         self.date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def __repr__(self) -> str:
-        return f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code} \n \
+        return f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code} \
                 Amount: {self.amount} | Price: ${self.price} | Total price: ${self.calculate_total_price()}'
 
     def calculate_total_price(self) -> float | int:
@@ -27,17 +27,15 @@ class Transaction:
     
 
 class Asset:
-    def __init__(self, code:str, name:str, type:str, amount:int = 0, price:float = 0) -> None:
+    def __init__(self, code:str, type:str, amount:int = 0, price:float = 0) -> None:
         self.code = code
-        self.name = name
         self.type = type  
         self.amount = amount
         self.medium_price = price
         self.curr_price = price 
 
     def __repr__(self):
-        return f'Asset: {self.code} | Type: {self.type} | Amount: {self.amount} | Medium price: ${self.medium_price:.2f}\n \
-                Current price: ${self.curr_price:.2f}'
+        return f'Asset: {self.code} | Type: {self.type} | Amount: {self.amount} | Medium price: ${self.medium_price:.2f} | Current price: ${self.curr_price:.2f}'
 
     def calculate_invested_val(self) -> float | int:  # Here we don't need to pass amount, for example, because the instance
         return self.amount * self.medium_price        # already have the self.amount when initialized, and so does the method.
@@ -66,40 +64,70 @@ class Portifolio:
     def __init__(self):
         self.assets:list[Asset] = []
         self.transactions:list[Transaction] = []
+        self._load_transactions()
+    
+    def _add_asset(self, code:str, type:str, amount:int, price:float) -> None:
+        new_asset = Asset(code, type, amount, price)
+        self.assets.append(new_asset)
+        print(f'New asset {code} added to the portifolio')
 
-    def add_transaction(self, transaction:Transaction) -> None:
+    def _add_transaction(self, transaction:Transaction) -> None:
         self.transactions.append(transaction)
         self._save_transaction()
 
-    def _save_transaction(self) -> None:
-        data = [t.convert_to_dict() for t in self.transactions]
-
-        with open('transaction_log.json', 'w') as json_file:
-            json.dump(data, json_file, indent=2)
-
-    def buy_asset(self, asset_code:str, amount:int, price:float):
+    def buy_asset(self, asset_code:str, asset_type:str, amount:int, price:float) -> None:
         asset = self._get_asset(asset_code)
 
-        if asset:
-            asset.purchase(amount, price)
+        if not asset:
+            self._add_asset(asset_code, asset_type, amount, price)
         else:
-            print(f'Asset {asset_code} not found.')
-            pass
-
+            asset.purchase(amount, price)
+            
         transaction = Transaction(asset_code, 'purchase', amount, price)
-        self.add_transaction(transaction)
+        self._add_transaction(transaction)
 
-    def _get_asset(self, code:str) -> Asset | None:
+    def _get_asset(self, code:str) -> Asset | None:        
         for asset in self.assets:
             if asset.code == code:
                 return asset
         return None
+
+    def _save_transaction(self) -> None:
+        data = [t.convert_to_dict() for t in self.transactions]
+
+        with open('transaction_log.json', 'w', encoding='utf8') as json_file:
+            json.dump(data, json_file, indent=4)
+
+    def _load_transactions(self) -> None:        
+        with open('transaction_log.json', 'r') as json_file:
+            self.transactions = json.load(json_file)
+
+    def calculate_total_invested(self) -> int | float:
+        total = 0
+        
+        for a in self.assets:
+            total += a.calculate_invested_val()
+        return total
     
-    def load_transactions(self):
-        ...
+    def calculate_actual_total(self) -> int | float:
+        total = 0
+        
+        for a in self.assets:
+            total += a.calculate_actual_val()
+        return total
 
-    def calculate_total_invested(self):
-        ...
+    def calculate_total_valorization(self) -> int | float:
+        return self.calculate_total_invested() - self.calculate_actual_total()
+    
 
-    def calculate_total_valorization(self):
-        ...
+p = Portifolio()
+p.buy_asset('PETR4', 'Action', 10, 40)
+print(p.assets)
+print(p.transactions)
+print(p.calculate_total_invested())
+print(p.calculate_actual_total())
+
+p.assets[0].update_price(50)
+p.buy_asset('PETR4', 'Action', 10, 40)
+print(p.calculate_total_invested())
+print(p.calculate_actual_total())
