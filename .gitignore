@@ -1,0 +1,14 @@
+# --- Python & Venv ---
+__pycache__/
+.venv/
+env/
+venv/
+*.py[cod]
+
+# IDE (VS Code)
+.vscode/
+.history/
+
+# Banco de Dados Local
+*.db
+*.sqlite3
