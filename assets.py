@@ -9,8 +9,7 @@ class Transaction:
         self.date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def __repr__(self) -> str:
-        return f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code} \
-                Amount: {self.amount} | Price: ${self.price} | Total price: ${self.calculate_total_price()}'
+        return f'The operation {self.operation} was executed.\n | Date: {self.date} | Asset: {self.asset_code} | Amount: {self.amount} | Price: ${self.price} | Total price: ${self.calculate_total_price()}'
 
     def calculate_total_price(self) -> float | int:
         return self.amount * self.price
@@ -86,6 +85,17 @@ class Portifolio:
         transaction = Transaction(asset_code, 'purchase', amount, price)
         self._add_transaction(transaction)
 
+    def sell_asset(self, asset_code:str, asset_type:str, amount:int, price:float) -> None:
+        asset = self._get_asset(asset_code)
+
+        if not asset:
+            print('ação inválida')
+        else:
+            ...
+
+        transaction = Transaction(asset_code, 'sell', amount, price)
+        self._add_transaction(transaction)
+
     def _get_asset(self, code:str) -> Asset | None:        
         for asset in self.assets:
             if asset.code == code:
@@ -99,8 +109,19 @@ class Portifolio:
             json.dump(data, json_file, indent=4)
 
     def _load_transactions(self) -> None:        
-        with open('transaction_log.json', 'r') as json_file:
-            self.transactions = json.load(json_file)
+        try:
+            with open('transaction_log.json', 'r', encoding='utf8') as json_file:
+                data = json.load(json_file)
+
+                self.transactions = [
+                    Transaction(t['asset_code'], t['operation'], t['amount'], t['price'])
+                    for t in data
+                ]
+
+        except FileNotFoundError:
+            self.transactions = []
+        except json.JSONDecodeError:
+            print("Error: Failed to decode JSON from the file.")
 
     def calculate_total_invested(self) -> int | float:
         total = 0
